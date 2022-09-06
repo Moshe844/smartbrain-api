@@ -11,7 +11,7 @@ const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
 const image = require('./controllers/image');
 
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '1';
 
 
 
@@ -46,6 +46,6 @@ app.post('/imageurl', (req, res) => {image.handleApiCall(req, res)})
 
 
 
-app.listen(3001, () => {
-	console.log('app is running on port 3001')
+app.listen(process.env.PORT || 3001, () => {
+	console.log(`app is running on port ${process.env.PORT}`)
 })
