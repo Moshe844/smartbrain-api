@@ -18,7 +18,7 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '1';
 const db = knex({
 	client: 'pg',
 	connection: {
-		host : '127.0.0.1',
+		host : 'postgresql-octagonal-76814',
 		user : 'postgres',
 		port: 5432,
 		password : 'Moshe6700',
