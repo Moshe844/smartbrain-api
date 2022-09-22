@@ -7,16 +7,16 @@ const register = require("./controllers/register");
 const signin = require("./controllers/signin");
 const profile = require("./controllers/profile");
 const image = require("./controllers/image");
-const { Pool } = require("pg");
+// const { Pool } = require("pg");
 
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "1";
 
-const pool = new Pool({
-  connectionString:
-    process.env.DATABASE_URL ||
-    "postgresql://postgres:Moshe6700@localhost:5432/smart-brain",
-  ssl: process.env.DATABASE_URL ? true : false,
-});
+// const pool = new Pool({
+//   connectionString:
+//     process.env.DATABASE_URL ||
+//     "postgresql://postgres:Moshe6700@localhost:5432/smart-brain",
+//   ssl: process.env.DATABASE_URL ? true : false,
+// });
 
 const db = knex({
   client: "pg",
@@ -53,22 +53,39 @@ app.post("/imageurl", (req, res) => {
 });
 app.post("/sendResetPassowrdLink", (req, res) => {
   const email = req.body.email;
-  pool.query(`SELECT * FROM login WHERE email='${email}'`).then((data) => {
-    if (data.rowCount === 0) {
-      return res
-        .status(401)
-        .json({ message: "user with that email does not exists" });
-    }
-    const { email } = data.rows[0];
-    const emailBody = `your sever url is http://localhost:3001/resetpassword/${btoa(
-      email
-    )}`;
-    res.send(emailBody);
-  });
+  db.select()
+    .from("login")
+    .where({ email })
+    .then((data) => {
+      if (data.rowCount === 0) {
+        return res
+          .status(401)
+          .json({ message: "user with that email does not exists" });
+      }
+      const { email } = data.rows[0];
+      const emailBody = `your sever url is http://localhost:3001/resetpassword/${btoa(
+        email
+      )}`;
+      res.send(emailBody);
+    });
 });
-app.get("/resetpassword/:token", (req, res) => {
-  const email = atob(req.params.token);
-});
+// app.get("/resetpassword/:token", (req, res) => {
+//   const email = atob(req.params.token);
+//   const { newPassowrd, newPassowrdConfirm } = req.body;
+//   if (newPassowrd !== newPassowrdConfirm) {
+//     return res.status(400).json({ message: "passowrd does not match" });
+//   }
+//   const hash = bcrypt.hashSync(newPassowrd);
+//   pool
+//     .query(`UPDATE login SET hash='${hash}' WHERE email='${email}'`)
+//     .then((data) => {
+//       if (data.rowCount === 1) {
+//         return res
+//           .status(200)
+//           .json({ message: "password updated successfully" });
+//       }
+//     });
+// });
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
