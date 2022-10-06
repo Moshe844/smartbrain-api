@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  #backend API
+  smart-brain-api:
+    container_name: backend
+    build: ./
+    command: nodemon server.js
+    working_dir: /usr/src/smart-brain-api
+    environment:
+      POSTGRES_URI: postgres://moshe:Moshe6700@postgres:5432/smart-brain-docker
+    links:
+      - postgres
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./:/usr/src/smart-brain-api
+
+    # postgres
+  postgres:
+    environment:
+      POSTGRES_USER: moshe
+      POSTGRES_PASSWORD: Moshe6700
+      POSTGRES_DB: smart-brain-docker
+      POSTGRES:_HOST: postgres
+    build: ./postgres
+    ports:
+      - "5432:5432"
